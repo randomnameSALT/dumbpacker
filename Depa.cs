@@ -3,9 +3,6 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Collections.Generic;
 
 namespace Depa
 {
@@ -14,7 +11,7 @@ namespace Depa
         /// <summary>
         /// Size of the depacking code.
         /// </summary>
-        private const short DEPA_SIZE = 0x2328;
+        private const short DEPA_SIZE = 0x1A60;
 
         /// <summary>
         /// Current process module self-reference.
@@ -25,14 +22,14 @@ namespace Depa
         {
             var currentProcessBytes = File.ReadAllBytes(PROC_REF.FileName);
             var procBufferBytes = new byte[currentProcessBytes.LongLength - DEPA_SIZE];
-            var isMasked = currentProcessBytes[0x2300].Equals(0);
+            var isMasked = currentProcessBytes[0x1A50].Equals(0);
 
             Array.Copy(currentProcessBytes, DEPA_SIZE, procBufferBytes, 0, currentProcessBytes.LongLength - DEPA_SIZE);
 
             string randomNameString =
                     isMasked
                         ? Decompress(procBufferBytes)
-                        : Decompress(procBufferBytes, true, currentProcessBytes[0x2300]);
+                        : Decompress(procBufferBytes, true, currentProcessBytes[0x1A50]);
             Process.Start(randomNameString + ".exe");
         }
 
